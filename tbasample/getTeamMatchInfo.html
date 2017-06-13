@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>The Blue Alliance API Test</title>
+</head>
+
+<body>
+    <div class='teaminfo'>
+        My team: <span id='teamnickname'></span><br/> City: <span id='city'></span><br/> Matches: <span id='matchInfo'></span><br/>        Red Matches: <span id='matchInfoRed'></span><br/> Blue Matches: <span id='matchInfoBlue'></span><br/>
+
+    </div>
+    <div class='rawresult'>
+
+        Raw result:
+        <div id='result'></div>
+    </div>
+
+    <script>
+        // can do Synchronous:
+        // var xhr = new XMLHttpRequest();
+        // xhr.open("GET", "https://www.thebluealliance.com/api/v3/team/frc3966", false);
+        // xhr.setRequestHeader("accept", "application/json");
+        // xhr.setRequestHeader("X-TBA-Auth-Key", "10mk6Ba3VwWUsP5i7gwr1dPCpnsSSE5pc8Fkt4K91faqaejPRd2ZVMrW3bTdGII2");
+        // xhr.send();
+        // var response = JSON.parse(xhr.responseText);
+        // //alert(xhr.responseText);
+        // document.getElementById('result').innerText = xhr.responseText;
+
+        var teamKey = 'frc3966';
+        // OR Asynchronous:
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "https://www.thebluealliance.com/api/v3/team/frc3966", true);
+        xhr.setRequestHeader("accept", "application/json");
+        xhr.setRequestHeader("X-TBA-Auth-Key", "10mk6Ba3VwWUsP5i7gwr1dPCpnsSSE5pc8Fkt4K91faqaejPRd2ZVMrW3bTdGII2");
+        xhr.send();
+        xhr.onload = function (e) {
+            var response = JSON.parse(xhr.responseText);
+            //alert(xhr.responseText);
+            document.getElementById('result').innerText = xhr.responseText;
+
+            document.getElementById('teamnickname').innerText = response.nickname;
+            document.getElementById('city').innerText = response.city;
+        }
+
+        var xhr2 = new XMLHttpRequest();
+        xhr2.open("GET", "https://www.thebluealliance.com/api/v3/team/frc3966/matches/2017", true);
+        xhr2.setRequestHeader("accept", "application/json");
+        xhr2.setRequestHeader("X-TBA-Auth-Key", "10mk6Ba3VwWUsP5i7gwr1dPCpnsSSE5pc8Fkt4K91faqaejPRd2ZVMrW3bTdGII2");
+        xhr2.send();
+        xhr2.onload = function (e) {
+            var response = JSON.parse(xhr2.responseText);
+            //alert(xhr.responseText);
+            document.getElementById('result').innerText += xhr2.responseText;
+
+            var infoString = '';
+            var redMatches = 0;
+            var blueMatches = 0;
+                        var redMatchWins = 0;
+            var blueMatchWins = 0;
+            for (var key in response) {
+                var info = response[key];
+
+                var teamkeys = info.alliances.red.team_keys;
+                for (var tk in teamkeys) {
+                    if (teamkeys[tk] == teamKey) {
+                        redMatches += 1;
+
+                        if(info.winning_alliance == "red"){
+                            redMatchWins++;
+                        }
+                    }
+                }
+                teamkeys = info.alliances.blue.team_keys;
+                for (var tk in teamkeys) {
+                    if (teamkeys[tk] == teamKey) {
+                        blueMatches += 1;
+                        if(info.winning_alliance == "blue"){
+                            blueMatchWins++;
+                        }
+                    }
+                }
+
+                if (info.key) {
+                    infoString += info.key + ', ';
+                }
+            }
+
+            var numMatches = response.length;
+            document.getElementById('matchInfo').innerText = numMatches;
+            document.getElementById('matchInfoRed').innerText = `Won ${redMatchWins} of ${redMatches}, ${(100*redMatchWins/redMatches).toFixed(2)}%`;
+            document.getElementById('matchInfoBlue').innerText = `Won ${blueMatchWins} of ${blueMatches}, ${(100*blueMatchWins/blueMatches).toFixed(2)}%`;
+        }
+    </script>
+    <style>
+        #teamnickname {
+            color: darkgreen;
+        }
+
+        #city {
+            color: brown;
+        }
+
+        #matchInfoRed {
+            background-color: red;
+            color:white;
+        }
+        #matchInfoBlue {
+            background-color: blue;
+            color:white;
+        }
+
+        .teaminfo {
+            padding: 10px;
+        }
+
+        .rawresult {
+            /*position: fixed;*/
+            /*top: 200px;*/
+            /*bottom: 0;*/
+            /*overflow: scroll;*/
+            background-color: lightblue;
+        }
+    </style>
+</body>
+
+</html>
