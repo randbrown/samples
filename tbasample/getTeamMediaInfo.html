@@ -19,12 +19,13 @@
     </div>
 
 
+    <script type="text/javascript" src="apiKey.js"></script>
     <script>
         // can do Synchronous:
         // var xhr = new XMLHttpRequest();
         // xhr.open("GET", "https://www.thebluealliance.com/api/v3/team/frc3966", false);
         // xhr.setRequestHeader("accept", "application/json");
-        // xhr.setRequestHeader("X-TBA-Auth-Key", "10mk6Ba3VwWUsP5i7gwr1dPCpnsSSE5pc8Fkt4K91faqaejPRd2ZVMrW3bTdGII2");
+        // xhr.setRequestHeader("X-TBA-Auth-Key", apiKey);
         // xhr.send();
         // var response = JSON.parse(xhr.responseText);
         // //alert(xhr.responseText);
@@ -34,7 +35,7 @@
         var xhr = new XMLHttpRequest();
         xhr.open("GET", "https://www.thebluealliance.com/api/v3/team/frc3966", true);
         xhr.setRequestHeader("accept", "application/json");
-        xhr.setRequestHeader("X-TBA-Auth-Key", "10mk6Ba3VwWUsP5i7gwr1dPCpnsSSE5pc8Fkt4K91faqaejPRd2ZVMrW3bTdGII2");
+        xhr.setRequestHeader("X-TBA-Auth-Key", apiKey);
         xhr.send();
         xhr.onload = function (e) {
             var response = JSON.parse(xhr.responseText);
@@ -48,7 +49,7 @@
         var xhr2 = new XMLHttpRequest();
         xhr2.open("GET", "https://www.thebluealliance.com/api/v3/team/frc3966/media/2017", true);
         xhr2.setRequestHeader("accept", "application/json");
-        xhr2.setRequestHeader("X-TBA-Auth-Key", "10mk6Ba3VwWUsP5i7gwr1dPCpnsSSE5pc8Fkt4K91faqaejPRd2ZVMrW3bTdGII2");
+        xhr2.setRequestHeader("X-TBA-Auth-Key", apiKey);
         xhr2.send();
         xhr2.onload = function (e) {
             var response = JSON.parse(xhr2.responseText);
