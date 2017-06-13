@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>The Blue Alliance API Test</title>
+</head>
+
+<body>
+    <div class='teaminfo'>
+        My team: <span id='teamnickname'></span><br/> City: <span id='city'></span><br/> Matches: <span id='matchInfo'></span><br/>        Red Matches: <span id='matchInfoRed'></span><br/> Blue Matches: <span id='matchInfoBlue'></span><br/>
+
+    </div>
+    <div class='rawresult'>
+
+        Raw result:
+        <div id='result'></div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.2.1.js" integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE=" crossorigin="anonymous"></script>
+
+    <script type="text/javascript" src="apiKey.js"></script>
+    <script>
+        var teamKey = 'frc3966';
+
+        $.ajaxSetup({
+            headers: {
+                'X-TBA-Auth-Key': apiKey
+            }
+        });
+
+        $.getJSON("https://www.thebluealliance.com/api/v3/team/frc3966",
+            function success(data) {
+                $('#result').append("\n Team Info: \n");
+                $('#result').append(JSON.stringify(data, null, 4));
+                $('#teamnickname').text(data.nickname);
+                $('#city').text(data.city);
+            });
+
+        $.getJSON("https://www.thebluealliance.com/api/v3/team/frc3966/matches/2017",
+            function success(data) {
+                $('#result').append("\n Match Info: \n");
+                $('#result').append(JSON.stringify(data, null, 4));
+
+                var infoString = '';
+                var redMatches = 0;
+                var blueMatches = 0;
+                var redMatchWins = 0;
+                var blueMatchWins = 0;
+                for (var key in data) {
+                    var info = data[key];
+
+                    var teamkeys = info.alliances.red.team_keys;
+                    for (var tk in teamkeys) {
+                        if (teamkeys[tk] == teamKey) {
+                            redMatches += 1;
+
+                            if (info.winning_alliance == "red") {
+                                redMatchWins++;
+                            }
+                        }
+                    }
+                    teamkeys = info.alliances.blue.team_keys;
+                    for (var tk in teamkeys) {
+                        if (teamkeys[tk] == teamKey) {
+                            blueMatches += 1;
+                            if (info.winning_alliance == "blue") {
+                                blueMatchWins++;
+                            }
+                        }
+                    }
+
+                    if (info.key) {
+                        infoString += info.key + ', ';
+                    }
+                }
+
+                var numMatches = data.length;
+                $('#matchInfo').text(numMatches);
+                $('#matchInfoRed').text(`Won ${redMatchWins} of ${redMatches}, ${(100 * redMatchWins / redMatches).toFixed(2)}%`);
+                $('#matchInfoBlue').text(`Won ${blueMatchWins} of ${blueMatches}, ${(100 * blueMatchWins / blueMatches).toFixed(2)}%`);
+            });
+    </script>
+    <style>
+        #teamnickname {
+            color: darkgreen;
+        }
+
+        #city {
+            color: brown;
+        }
+
+        #matchInfoRed {
+            background-color: red;
+            color: white;
+        }
+
+        #matchInfoBlue {
+            background-color: blue;
+            color: white;
+        }
+
+        .teaminfo {
+            padding: 10px;
+        }
+
+        .rawresult {
+            background-color: lightblue;
+            font-family: monospace;
+            white-space: pre;
+        }
+    </style>
+</body>
+
+</html>
